@@ -1,0 +1,9 @@
+.DS_Store
+.env
+.env.*
+backups/
+*旧版*.pdf
+*.pem
+*.p12
+*.p8
+*.key

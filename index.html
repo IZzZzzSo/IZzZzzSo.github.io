@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IZZZSO — 李钰姝的创意空间</title><meta name="description" content="李钰姝的个人设计空间：品牌视觉、插画与 AI 创意。"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='black'/%3E%3Ctext x='12' y='30' fill='white' font-size='30'%3Ei%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="space.css"><link rel="stylesheet" href="reveal.css?v=pre-lag-restore"><link rel="stylesheet" href="works.css?v=single-panel-1"><link rel="stylesheet" href="detail.css?v=projects-20260929"><script defer src="space.js?v=projects-20260930"></script></head>
+<body>
+<div class="intro-screen" aria-hidden="true">IZZZSO SPACE.</div>
+<main id="home">
+ <div class="scene" id="scene"><img src="assets/about-collage.png" alt="李钰姝的黑白个人生活拼贴，About Me，Welcome to my world" draggable="false"></div>
+ <header><a class="brand" href="#home" aria-label="回到首页">IZZZSO<span>SPACE.</span></a><h1>平面设计 · 插画 · AI 创意<br>Design, curiosity & everyday life.</h1><div class="tools"><span>LI YUSHU — PORTFOLIO 2026</span><button id="motion" aria-pressed="false">Orbit Off <kbd>O</kbd></button><button id="rewind">Rewind <kbd>R</kbd></button></div></header>
+ <footer class="dock"><button data-open="design" class="discipline">DESIGN</button><button data-open="all" class="view-works"><span>View Works</span><span>浏览作品 ↗</span></button><button data-open="ai" class="discipline">AI / PLAY</button></footer>
+</main>
+<section id="works" role="dialog" aria-modal="true" aria-labelledby="works-title" hidden>
+ <div class="works-inner" tabindex="-1">
+  <div class="panel-head"><h2 id="works-title">Works <span>_Index.</span></h2><button class="close" aria-label="关闭作品目录">×</button></div>
+  <div class="number-cage"><div class="number-display" aria-label="当前作品编号"><span class="number-window"><span id="number-reel"></span></span><i></i><span id="total-number">08</span></div></div>
+  <article id="detail" aria-labelledby="detail-title" hidden>
+   <div class="detail-content"><p id="detail-code"></p><h2 id="detail-title" tabindex="-1"></h2><p id="detail-meta"></p><div id="detail-body"></div></div>
+   <div class="detail-nav"><button id="previous">← 上一个</button><span id="detail-count"></span><button id="next">下一个 →</button></div>
+  </article>
+  <div id="project-list"></div>
+ </div>
+ <div class="detail-return" hidden><button id="back" aria-label="返回作品列表">View Other Works</button></div>
+</section>
+</body></html>
