@@ -1,5 +1,5 @@
 const projects=[
- {title:'企业传播视觉系统',meta:'Branding / Graphic Design',type:'design'},
+ {title:'凯洛格 · 企业传播视觉系统',meta:'Branding / Graphic Design',type:'design',image:'assets/projects/keylogic-long.jpg',imageAlt:'凯洛格品牌策略、视觉识别与应用案例完整长图',expandIntro:true},
  {title:'孤独的章鱼',meta:'Picture Book / Illustration',type:'design',image:'assets/projects/lonely-octopus-long.jpg',imageAlt:'孤独的章鱼绘本项目完整作品介绍长图'},
  {title:'CROCO',meta:'Character / IP Design',type:'design',image:'assets/projects/croco-long.jpg',imageAlt:'CROCO IP 项目完整作品介绍长图'},
  {title:'NIHAO · PETSHIOP',meta:'Branding / IP Design',type:'design',image:'assets/projects/nihao-petshop-long.png',imageAlt:'NIHAO PETSHOP 品牌与 IP 设计完整作品介绍长图'},
@@ -63,7 +63,19 @@ function closePanel(){
   (returnFocus||$('.view-works')).focus({preventScroll:true});
  });
 }
-function workMarkup(i){const p=projects[i];const media=p.image?`<img class="detail-long-image" src="${p.image}" alt="${p.imageAlt}" loading="lazy" decoding="async">`:`<div class="detail-placeholder"><span>${pad(i+1)}</span><p>作品即将呈现 / Coming soon</p></div>`;return `<div class="detail-lede"><p>作品展示 / Project showcase</p><div class="detail-facts"><span>CATEGORY<br><b>${p.meta}</b></span><span>INDEX<br><b>${pad(i+1)} / ${pad(projects.length)}</b></span></div></div><div class="detail-media">${media}</div>`}
+function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="detail-long-image" src="${p.image}" alt="凯洛格案例首图与项目简介" loading="lazy" decoding="async"></div>
+  <section class="keylogic-expand" aria-label="凯洛格项目介绍"><button class="keylogic-expand-button" type="button" aria-controls="keylogic-description" aria-expanded="false">展开完整内容 ↗</button>
+    <div class="keylogic-description" id="keylogic-description" hidden>
+      <p>凯洛格成立于 2004 年，专注于咨询培训领域。以战略引领、人才驱动为方向，为企业提供体系咨询、面授培训和数字化学习相结合的人才管理解决方案。</p>
+      <p>凯洛格恪守“专业主义”的价值观，践行“赋能于人”的使命。品牌视觉以清晰、理性的表达呈现专业知识，同时在不同媒介中保持一致的识别。</p>
+      <h3>可视化专业协作</h3>
+      <p>从战略咨询、组织能力到领导力培养，凯洛格的工作始终围绕人与组织共同成长。设计以深蓝和白色建立明确对比，用有秩序的文字层级和视觉节奏承载复杂信息。</p>
+      <h3>面向多元场景</h3>
+      <p>品牌语言延展至报告、数字页面、活动传播与线下物料，让研究洞察和人才发展内容在不同触点都能被清楚识别。</p>
+    </div>
+  </section>
+  <div class="keylogic-rest-clip"><img class="detail-long-image" src="${p.image}" alt="凯洛格视觉识别与品牌应用展示长图后续" loading="lazy" decoding="async"></div>`}
+function workMarkup(i){const p=projects[i];const media=p.image?(p.expandIntro?keylogicMarkup(p):`<img class="detail-long-image" src="${p.image}" alt="${p.imageAlt}" loading="lazy" decoding="async">`):`<div class="detail-placeholder"><span>${pad(i+1)}</span><p>作品即将呈现 / Coming soon</p></div>`;return `<div class="detail-lede"><p>作品展示 / Project showcase</p><div class="detail-facts"><span>CATEGORY<br><b>${p.meta}</b></span><span>INDEX<br><b>${pad(i+1)} / ${pad(projects.length)}</b></span></div></div><div class="detail-media">${media}</div>`}
 function aboutMarkup(){return `
   <div class="resume-sheet">
     <div class="resume-opening"><p>GRAPHIC DESIGNER & CREATIVE PRACTITIONER</p><h3>LI YUSHU <span>李钰姝</span></h3></div>
@@ -90,6 +102,37 @@ document.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',o
 works.querySelector('.close').addEventListener('click',closePanel);
 $('#back').addEventListener('click',returnToIndex);
 $('#previous').addEventListener('click',()=>showDetail(selected-1));$('#next').addEventListener('click',()=>showDetail(selected+1));
+detail.addEventListener('click',e=>{
+ const button=e.target.closest('.keylogic-expand-button');if(!button||!detail.contains(button))return;
+ const content=detail.querySelector('#keylogic-description');if(!content)return;
+ const expanded=button.getAttribute('aria-expanded')==='true';
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  content.hidden=expanded;
+  content.classList.toggle('is-open',!expanded);
+  content.style.height=expanded?'0px':'auto';
+  button.setAttribute('aria-expanded',String(!expanded));
+  button.textContent=expanded?'展开完整内容 ↗':'收起内容 ↖';
+  return;
+ }
+ const currentHeight=content.getBoundingClientRect().height;
+ content.hidden=false;
+ content.style.height=`${currentHeight}px`;
+ void content.offsetHeight;
+ button.setAttribute('aria-expanded',String(!expanded));
+ button.textContent=expanded?'展开完整内容 ↗':'收起内容 ↖';
+ requestAnimationFrame(()=>{
+  content.classList.toggle('is-open',!expanded);
+  content.style.height=expanded?'0px':`${content.scrollHeight}px`;
+ });
+});
+detail.addEventListener('transitionend',e=>{
+ const content=e.target;
+ if(!content.classList.contains('keylogic-description')||e.propertyName!=='height')return;
+ const button=detail.querySelector('.keylogic-expand-button');
+ if(!button)return;
+ if(button.getAttribute('aria-expanded')==='true')content.style.height='auto';
+ else{content.hidden=true;content.style.height='0px'}
+});
 $('#back').addEventListener('pointermove',e=>{if(reducedPanels.matches||e.pointerType==='touch')return;const rect=e.currentTarget.getBoundingClientRect();e.currentTarget.style.setProperty('--rx',`${-(e.clientY-rect.top-rect.height/2)/rect.height*15}deg`);e.currentTarget.style.setProperty('--ry',`${(e.clientX-rect.left-rect.width/2)/rect.width*15}deg`)});
 $('#back').addEventListener('pointerleave',e=>{e.currentTarget.style.removeProperty('--rx');e.currentTarget.style.removeProperty('--ry')});
 window.addEventListener('resize',measureOrigin,{passive:true});
