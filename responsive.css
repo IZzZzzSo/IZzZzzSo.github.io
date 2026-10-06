@@ -2,11 +2,12 @@
 #detail .detail-media{padding:0}
 #detail .detail-long-image{width:100%;max-width:100%;height:auto}
 
-/* Portrait phones keep the complete landscape collage visible. */
+/* Portrait phones use the supplied vertical collage at its natural ratio. */
 @media (max-width:700px) and (orientation:portrait){
   #home{min-height:100svh}
-  #home .scene{inset:150px 0 145px;overflow:hidden;--collage-width:100vw;--collage-height:calc(100vw*779/2019)}
-  #home .scene img{width:100vw;min-width:0;max-height:none;height:auto;object-fit:contain;object-position:center}
+  #home .scene{inset:84px 0 82px;overflow:hidden;--collage-width:min(100vw,calc((100svh - 166px)*941/1672));--collage-height:calc(var(--collage-width)*1672/941)}
+  #home .scene img{width:var(--collage-width);min-width:0;max-height:100%;height:auto;object-fit:contain;object-position:center}
+  #home .scene::before,#home .scene::after{display:none}
   #home header{inset:12px 12px auto;gap:8px}
   #home header .brand{font-size:26px}
   #home header h1{max-width:165px;font-size:12px;line-height:1.5;text-align:right}

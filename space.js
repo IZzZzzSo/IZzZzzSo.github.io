@@ -8,11 +8,107 @@ const projects=[
  {title:'2026开年十二讲系列活动',meta:'Media Design',type:'ai',image:'assets/projects/twelve-talks-long.png',imageAlt:'2026开年十二讲系列活动完整作品介绍长图'},
  {title:'关于我',meta:'designer',type:'about'}
 ];
-const $=s=>document.querySelector(s),works=$('#works'),detail=$('#detail'),list=$('#project-list');
+const $=s=>document.querySelector(s),works=$('#works'),detail=$('#detail'),list=$('#project-list'),backdrop=$('#project-backdrop');
 const scroller=works.querySelector('.works-inner'),panelHead=works.querySelector('.panel-head'),returnControl=works.querySelector('.detail-return');
-let selected=0,orbit=false,panelState='closed',panelTimer=0,returnFocus=null;
-const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduced-motion: reduce)');
+let selected=0,orbit=false,panelState='closed',panelTimer=0,backdropIndex=-1,returnFocus=null;
+const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduced-motion: reduce)'),compactBackdrop=matchMedia('(max-width:700px)');
+// Only projects with a foldout entry replace the original detail backdrop.
+const foldoutProjects=[
+ {key:'01-keylogic',caption:'KEYLOGIC / BRAND IDENTITY',angle:'-72deg',left:'50%',top:'35%',secondary:{angle:'79deg',left:'49%',top:'69%'}},
+ {key:'02-octopus',caption:'THE OCTOPUS WHO LIVES ALONE',angle:'-76deg',left:'50%',top:'50%',prefix:'square-'},
+ {key:'03-croco',caption:'CROCO / IP DESIGN',angle:'74deg',left:'51%',top:'49%'},
+ {key:'04-nihao',caption:'NIHAO / IP DESIGN',angle:'68deg',left:'48%',top:'52%',extension:'png'},
+ {key:'05-weilan',caption:'WEILAN / OCEAN CARDS',angle:'-80deg',left:'50%',top:'35%',secondary:{angle:'71deg',left:'52%',top:'67%'}},
+ {key:'06-workshop',caption:'AI WORKSHOP / EVENT VISUAL',angle:'82deg',left:'50%',top:'50%'},
+ null, // Keep the original backdrop for the twelve-talks project.
+ {key:'08-about',caption:'LI YUSHU / MY INFO',angle:'74deg',left:'47%',top:'78%',portrait:'assets/foldouts/08-about/portrait.png'}
+];
+const foldoutStage=$('#foldout-stage');
+let foldoutFrame=0,foldoutScrollFrame=0;
+function clearFoldout(){
+ cancelAnimationFrame(foldoutFrame);foldoutFrame=0;
+ cancelAnimationFrame(foldoutScrollFrame);foldoutScrollFrame=0;
+ foldoutStage.replaceChildren();foldoutStage.hidden=true;
+ foldoutStage.classList.remove('is-primed','is-unrolling');backdrop.classList.remove('has-foldout');
+}
+function foldoutTrack(project,placement,secondary=false){
+ const track=document.createElement('div');track.className=`foldout-track${secondary?' is-secondary':' '}${project.secondary&&!secondary?' is-rear':''}`;
+ track.dataset.project=project.key;
+ track.style.setProperty('--foldout-angle',placement.angle);
+ track.style.setProperty('--foldout-left',placement.left);
+ track.style.setProperty('--foldout-top',placement.top);
+ const paper=document.createElement('div');paper.className='foldout-paper';
+ for(let index=0;index<8;index++){
+  const number=pad(index+1),card=document.createElement('section'),art=document.createElement('img'),caption=document.createElement('div');
+  card.className='foldout-card';art.className='foldout-art';art.alt='';art.loading='eager';art.decoding='async';
+  art.src=project.portrait||`assets/foldouts/${project.key}/${secondary?'secondary-':project.prefix||''}${number}.${secondary?'jpg':project.extension||'jpg'}`;
+  caption.className='foldout-caption';
+  const label=document.createElement('span'),title=document.createElement('span');
+  label.className='foldout-number';label.textContent=pad(index+1+(secondary?8:0));
+  title.className='foldout-title';title.textContent=project.caption;
+  caption.append(label,title);
+  if(project.portrait){
+   const frame=document.createElement('div');frame.className='foldout-portrait-frame';
+   frame.style.setProperty('--portrait-position',['50% 22%','50% 36%','50% 15%','50% 52%','50% 29%','50% 48%','50% 18%','50% 40%'][index]);
+   frame.style.setProperty('--portrait-zoom',[1,1.03,1,1.05,1,1.04,1,1.03][index]);
+   frame.append(art);card.append(frame,caption);
+  }else card.append(art,caption);
+  paper.append(card);
+ }
+ const roller=document.createElement('div');roller.className='foldout-roller';
+ const motion=document.createElement('div');motion.className='foldout-motion';
+ const repeat=paper.cloneNode(true);
+ if(secondary)motion.append(repeat,paper);else motion.append(paper,repeat);
+ track.append(motion,roller);return track;
+}
+function syncFoldoutScroll(){
+ if(foldoutScrollFrame||panelState!=='detail'||foldoutStage.hidden||reducedPanels.matches)return;
+ foldoutScrollFrame=requestAnimationFrame(()=>{
+  foldoutScrollFrame=0;
+  // One eight-card sequence is repeated on either side of the seam.
+  const cycle=880*96/25.4;
+  foldoutStage.querySelectorAll('.foldout-track').forEach(track=>{
+   const speed=track.dataset.project==='08-about'?.06:.16;
+   const distance=(scroller.scrollTop*speed)%cycle;
+   const direction=track.classList.contains('is-secondary')?1:-1;
+   track.style.setProperty('--foldout-scroll',`${direction*distance}px`);
+  });
+ });
+}
+scroller.addEventListener('scroll',syncFoldoutScroll,{passive:true});
+function renderFoldout(i){
+ clearFoldout();const project=foldoutProjects[i];
+ if(compactBackdrop.matches||!project)return;
+ foldoutStage.append(foldoutTrack(project,project));
+ if(project.secondary)foldoutStage.append(foldoutTrack(project,project.secondary,true));
+ if(!reducedPanels.matches)foldoutStage.classList.add('is-primed');
+ foldoutStage.hidden=false;backdrop.classList.add('has-foldout');
+ if(!reducedPanels.matches)foldoutFrame=requestAnimationFrame(()=>{
+  foldoutStage.classList.remove('is-primed');foldoutStage.classList.add('is-unrolling');foldoutFrame=0;
+ });
+}
 const reel=$('#number-reel');reel.innerHTML=projects.map((_,i)=>`<span aria-hidden="true">${pad(i+1)}</span>`).join('');$('#total-number').textContent=pad(projects.length);
+function hideBackdrop(immediate=false){
+ clearFoldout();backdropIndex=-1;backdrop.classList.remove('is-visible','is-detail','is-switching');
+ backdrop.classList.toggle('is-suspended',immediate);
+}
+function showBackdrop(i,showGallery=true){
+ const p=projects[i];
+ if(compactBackdrop.matches||(!p?.image&&!foldoutProjects[i])){hideBackdrop();return}
+ backdrop.classList.remove('is-suspended');
+ // The detail foldout covers the gallery, so avoid painting a second huge image behind it.
+ if(!showGallery){backdrop.classList.add('is-visible');return}
+ if(backdropIndex!==i){
+  if(backdropIndex>=0&&!reducedPanels.matches){backdrop.classList.remove('is-switching');void backdrop.offsetWidth;backdrop.classList.add('is-switching')}
+  backdrop.style.setProperty('--gallery-image',`url("${p.image}")`);backdropIndex=i;
+ }
+ backdrop.classList.add('is-visible');
+}
+compactBackdrop.addEventListener('change',()=>{
+ if(panelState!=='detail')return;
+ if(!foldoutProjects[selected]){hideBackdrop();return}
+ showBackdrop(selected,false);renderFoldout(selected);
+});
 function setNumber(i){
  reel.querySelectorAll('span').forEach((number,index)=>number.classList.toggle('active',index===i));
  works.querySelector('.number-display').setAttribute('aria-label',`当前作品编号 ${pad(i+1)} / ${pad(projects.length)}`);
@@ -49,12 +145,25 @@ function openWorks(){
 }
 function returnToIndex(){
  if(panelState!=='detail')return;
+ panelState='returning';scroller.inert=true;
+ hideBackdrop(true);
+ if(!reducedPanels.matches){
+  $('#return-preview-number').textContent=pad(selected+1);
+  $('#return-preview-title').textContent=projects[selected].title;
+  $('#home').classList.add('is-returning');works.classList.add('is-returning');
+ }
  detail.hidden=true;works.classList.remove('is-detail');returnControl.hidden=true;
- panelState='index';panelHead.inert=false;list.inert=false;scroller.scrollTop=0;
- list.querySelector(`[data-index="${selected}"]`).focus({preventScroll:true});
+ panelHead.inert=false;list.inert=false;scroller.scrollTop=0;
+ finishAfter(840,()=>{
+  $('#home').classList.remove('is-returning');works.classList.remove('is-returning');
+  panelState='index';scroller.inert=false;
+  list.querySelector(`[data-index="${selected}"]`).focus({preventScroll:true});
+ });
 }
 function closePanel(){
  if(panelState==='closed'||panelState==='closing')return;
+ $('#home').classList.remove('is-returning');works.classList.remove('is-returning');
+ hideBackdrop();
  clearTimeout(panelTimer);measureOrigin();panelState='closing';scroller.inert=true;returnControl.hidden=true;
  works.classList.remove('is-open');document.body.classList.add('panel-closing');
  finishAfter(1000,()=>{
@@ -89,6 +198,9 @@ function aboutMarkup(){return `
 function showDetail(i){
  if(i<0||i>=projects.length||!['index','detail'].includes(panelState))return;
  selected=i;const p=projects[i];setNumber(i);
+ if(foldoutProjects[i]){
+  showBackdrop(i,false);renderFoldout(i);backdrop.classList.toggle('is-detail',!compactBackdrop.matches);
+ }else hideBackdrop(); // Unapproved projects keep the original plain background.
  detail.classList.toggle('is-info',p.type==='about');
  $('#detail-title').textContent=p.type==='about'?'My Info.':p.title;$('#detail-meta').textContent=p.meta;
  $('#detail-code').textContent=`${pad(i+1)} / ${pad(projects.length)} · ${p.type==='about'?'ABOUT':'SELECTED WORK'}`;

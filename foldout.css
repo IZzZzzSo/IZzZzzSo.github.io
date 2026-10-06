@@ -1,0 +1,33 @@
+/* Approved postcard studies, used only behind their matching detail panels. */
+#foldout-stage[hidden]{display:none!important}
+#project-backdrop.has-foldout.is-detail .gallery-ribbon{display:none}
+#project-backdrop.has-foldout.is-detail::after{background:transparent}
+#foldout-stage{position:absolute;inset:0;overflow:hidden;background:#fff;contain:paint;--foldout-card-w:100mm;--foldout-card-h:110mm;--foldout-art-size:90mm;--foldout-paper:#faf9f3}
+.foldout-track{position:absolute;z-index:1;top:var(--foldout-top,50%);left:var(--foldout-left,50%);width:var(--foldout-card-w);height:880mm;transform-origin:center;transform:translate(-50%,-50%) rotate(var(--foldout-angle,-76deg)) scale(var(--foldout-scale,.63))}
+.foldout-track:not(.is-secondary):not(.is-rear){--foldout-scale:.693}
+.foldout-track.is-secondary{z-index:2;--unroll-delay:160ms}
+.foldout-track.is-rear{opacity:.6}
+.foldout-motion{position:absolute;inset:0;transform:translate3d(0,var(--foldout-scroll,0px),0);will-change:transform}
+.foldout-paper{position:absolute;top:0;left:0;width:100%;height:100%;box-shadow:0 15px 22px #17243d28}
+.foldout-track:not(.is-secondary) .foldout-paper:last-child{top:880mm}
+.foldout-track.is-secondary .foldout-paper:first-child{top:-880mm}
+.foldout-card{position:relative;display:grid;grid-template-rows:90mm 10mm;width:var(--foldout-card-w);height:var(--foldout-card-h);padding:5mm;background:var(--foldout-paper)}
+.foldout-card:not(:last-child)::after{content:"";position:absolute;z-index:1;left:0;bottom:-1px;width:100%;height:3px;background:linear-gradient(90deg,#8b918d55,#4a546280 50%,#8b918d55)}
+.foldout-art{display:block;width:var(--foldout-art-size);height:var(--foldout-art-size);object-fit:cover;filter:saturate(.8)}
+.foldout-track.is-rear .foldout-art{filter:saturate(.56)}
+.foldout-track[data-project="03-croco"] .foldout-art{filter:saturate(.6)}
+.foldout-track[data-project="06-workshop"] .foldout-art{transform:scale(.85);transform-origin:center;filter:grayscale(1)}
+.foldout-track[data-project="04-nihao"] .foldout-art{background:#dce6f8}
+.foldout-portrait-frame{width:var(--foldout-art-size);height:var(--foldout-art-size);overflow:hidden;background:#eee}
+.foldout-track[data-project="08-about"] .foldout-art{object-fit:contain;object-position:var(--portrait-position,50% 35%);transform:scale(var(--portrait-zoom,1));filter:grayscale(1) contrast(1.08)}
+.foldout-caption{display:flex;align-items:end;justify-content:space-between;gap:5mm;min-width:0;color:#111;font-family:Arial,"PingFang SC",sans-serif}
+.foldout-number{font-size:16px;line-height:1;letter-spacing:-.04em}
+.foldout-title{font-size:7px;line-height:1;letter-spacing:.06em;white-space:nowrap}
+/* A narrow paper curl follows the leading edge while the stationary strip is revealed. */
+.foldout-roller{position:absolute;z-index:2;top:-6mm;left:-2mm;width:calc(100% + 4mm);height:12mm;border-radius:45% 45% 52% 52%;background:linear-gradient(180deg,#fff9 0%,#fff 28%,#d9d7cf 69%,#9b9b94 100%);box-shadow:0 5px 9px #26314340;opacity:0;pointer-events:none}
+#foldout-stage.is-primed .foldout-paper{clip-path:inset(0 0 100% 0)}
+#foldout-stage.is-unrolling .foldout-paper{animation:foldout-unroll 1176ms cubic-bezier(.18,.62,.2,1) var(--unroll-delay,0ms) both}
+#foldout-stage.is-unrolling .foldout-roller{animation:foldout-roller 1176ms cubic-bezier(.18,.62,.2,1) var(--unroll-delay,0ms) both}
+@keyframes foldout-unroll{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes foldout-roller{0%{transform:translateY(0);opacity:0}7%{opacity:.9}89%{opacity:.85}100%{transform:translateY(880mm);opacity:0}}
+@media(prefers-reduced-motion:reduce){#foldout-stage .foldout-paper,#foldout-stage .foldout-roller{animation:none!important}#foldout-stage .foldout-paper{clip-path:none!important}#foldout-stage .foldout-roller{display:none}}
