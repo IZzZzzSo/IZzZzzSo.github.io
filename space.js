@@ -9,9 +9,11 @@ const projects=[
  {title:'关于我',meta:'designer',type:'about'}
 ];
 const $=s=>document.querySelector(s),works=$('#works'),detail=$('#detail'),list=$('#project-list'),backdrop=$('#project-backdrop');
+const supportsWebp=(()=>{try{return document.createElement('canvas').toDataURL('image/webp').startsWith('data:image/webp')}catch{return false}})();
+const preferredImage=path=>supportsWebp?path.replace(/\.(png|jpe?g)$/i,'.webp'):path;
 const scroller=works.querySelector('.works-inner'),panelHead=works.querySelector('.panel-head'),returnControl=works.querySelector('.detail-return');
 let selected=0,orbit=false,panelState='closed',panelTimer=0,backdropIndex=-1,returnFocus=null;
-const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduced-motion: reduce)'),compactBackdrop=matchMedia('(max-width:700px)');
+const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduced-motion: reduce)'),compactBackdrop=matchMedia('(max-width:700px), (pointer:coarse) and (orientation:portrait)');
 // Only projects with a foldout entry replace the original detail backdrop.
 const foldoutProjects=[
  {key:'01-keylogic',caption:'KEYLOGIC / BRAND IDENTITY',angle:'-72deg',left:'50%',top:'35%',secondary:{angle:'79deg',left:'49%',top:'69%'}},
@@ -40,8 +42,8 @@ function foldoutTrack(project,placement,secondary=false){
  const paper=document.createElement('div');paper.className='foldout-paper';
  for(let index=0;index<8;index++){
   const number=pad(index+1),card=document.createElement('section'),art=document.createElement('img'),caption=document.createElement('div');
-  card.className='foldout-card';art.className='foldout-art';art.alt='';art.loading='eager';art.decoding='async';
-  art.src=project.portrait||`assets/foldouts/${project.key}/${secondary?'secondary-':project.prefix||''}${number}.${secondary?'jpg':project.extension||'jpg'}`;
+  card.className='foldout-card';art.className='foldout-art';art.alt='';art.loading='eager';art.decoding='async';art.fetchPriority='low';
+  art.src=preferredImage(project.portrait||`assets/foldouts/${project.key}/${secondary?'secondary-':project.prefix||''}${number}.${secondary?'jpg':project.extension||'jpg'}`);
   caption.className='foldout-caption';
   const label=document.createElement('span'),title=document.createElement('span');
   label.className='foldout-number';label.textContent=pad(index+1+(secondary?8:0));
@@ -100,7 +102,7 @@ function showBackdrop(i,showGallery=true){
  if(!showGallery){backdrop.classList.add('is-visible');return}
  if(backdropIndex!==i){
   if(backdropIndex>=0&&!reducedPanels.matches){backdrop.classList.remove('is-switching');void backdrop.offsetWidth;backdrop.classList.add('is-switching')}
-  backdrop.style.setProperty('--gallery-image',`url("${p.image}")`);backdropIndex=i;
+  backdrop.style.setProperty('--gallery-image',`url("${preferredImage(p.image)}")`);backdropIndex=i;
  }
  backdrop.classList.add('is-visible');
 }
@@ -172,7 +174,7 @@ function closePanel(){
   (returnFocus||$('.view-works')).focus({preventScroll:true});
  });
 }
-function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="detail-long-image" src="${p.image}" alt="凯洛格案例首图与项目简介" loading="lazy" decoding="async"></div>
+function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="detail-long-image" src="${preferredImage(p.image)}" alt="凯洛格案例首图与项目简介" loading="lazy" decoding="async" fetchpriority="high"></div>
   <section class="keylogic-expand" aria-label="凯洛格项目介绍"><button class="keylogic-expand-button" type="button" aria-controls="keylogic-description" aria-expanded="false">展开完整内容 ↗</button>
     <div class="keylogic-description" id="keylogic-description" hidden>
       <p>凯洛格成立于 2004 年，专注于咨询培训领域。以战略引领、人才驱动为方向，为企业提供体系咨询、面授培训和数字化学习相结合的人才管理解决方案。</p>
@@ -183,8 +185,9 @@ function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="
       <p>品牌语言延展至报告、数字页面、活动传播与线下物料，让研究洞察和人才发展内容在不同触点都能被清楚识别。</p>
     </div>
   </section>
-  <div class="keylogic-rest-clip"><img class="detail-long-image" src="${p.image}" alt="凯洛格视觉识别与品牌应用展示长图后续" loading="lazy" decoding="async"></div>`}
-function workMarkup(i){const p=projects[i];const media=p.image?(p.expandIntro?keylogicMarkup(p):`<img class="detail-long-image" src="${p.image}" alt="${p.imageAlt}" loading="lazy" decoding="async">`):`<div class="detail-placeholder"><span>${pad(i+1)}</span><p>作品即将呈现 / Coming soon</p></div>`;return `<div class="detail-lede"><p>作品展示 / Project showcase</p><div class="detail-facts"><span>CATEGORY<br><b>${p.meta}</b></span><span>INDEX<br><b>${pad(i+1)} / ${pad(projects.length)}</b></span></div></div><div class="detail-media">${media}</div>`}
+  <div class="keylogic-rest-clip"><img class="detail-long-image" src="${preferredImage(p.image)}" alt="凯洛格视觉识别与品牌应用展示长图后续" loading="lazy" decoding="async"></div>`}
+function detailImageAttrs(p){return supportsWebp&&p.image.endsWith('nihao-petshop-long.png')?' srcset="assets/projects/nihao-petshop-long-2400.webp 2400w, assets/projects/nihao-petshop-long.webp 4320w" sizes="(max-width:700px) 100vw, 1000px"':''}
+function workMarkup(i){const p=projects[i];const media=p.image?(p.expandIntro?keylogicMarkup(p):`<img class="detail-long-image" src="${preferredImage(p.image)}" alt="${p.imageAlt}" loading="lazy" decoding="async" fetchpriority="high"${detailImageAttrs(p)}>`):`<div class="detail-placeholder"><span>${pad(i+1)}</span><p>作品即将呈现 / Coming soon</p></div>`;return `<div class="detail-lede"><p>作品展示 / Project showcase</p><div class="detail-facts"><span>CATEGORY<br><b>${p.meta}</b></span><span>INDEX<br><b>${pad(i+1)} / ${pad(projects.length)}</b></span></div></div><div class="detail-media">${media}</div>`}
 function aboutMarkup(){return `
   <div class="resume-sheet">
     <div class="resume-opening"><p>GRAPHIC DESIGNER & CREATIVE PRACTITIONER</p><h3>LI YUSHU <span>李钰姝</span></h3></div>
