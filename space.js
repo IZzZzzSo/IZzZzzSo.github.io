@@ -174,7 +174,7 @@ function closePanel(){
   (returnFocus||$('.view-works')).focus({preventScroll:true});
  });
 }
-function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="detail-long-image" src="${preferredImage(p.image)}?v=20261009" alt="凯洛格案例首图与项目简介" loading="lazy" decoding="async" fetchpriority="high"></div>
+function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="detail-long-image" src="${preferredImage(p.image)}?v=20261009-aligned" alt="凯洛格案例首图与项目简介" loading="lazy" decoding="async" fetchpriority="high"></div>
   <section class="keylogic-expand" aria-label="凯洛格项目介绍"><button class="keylogic-expand-button" type="button" aria-controls="keylogic-description" aria-expanded="false">展开完整内容 ↗</button>
     <div class="keylogic-description" id="keylogic-description" hidden>
       <p>凯洛格成立于 2004 年，专注于咨询培训领域。以战略引领、人才驱动为方向，为企业提供体系咨询、面授培训和数字化学习相结合的人才管理解决方案。</p>
@@ -185,7 +185,7 @@ function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="
       <p>品牌语言延展至报告、数字页面、活动传播与线下物料，让研究洞察和人才发展内容在不同触点都能被清楚识别。</p>
     </div>
   </section>
-  <div class="keylogic-rest-clip"><img class="detail-long-image" src="${preferredImage(p.image)}?v=20261009" alt="凯洛格视觉识别与品牌应用展示长图后续" loading="lazy" decoding="async"></div>`}
+  <div class="keylogic-rest-clip"><img class="detail-long-image" src="${preferredImage(p.image)}?v=20261009-aligned" alt="凯洛格视觉识别与品牌应用展示长图后续" loading="lazy" decoding="async"></div>`}
 function detailImageAttrs(p){return supportsWebp&&p.image.endsWith('nihao-petshop-long.png')?' srcset="assets/projects/nihao-petshop-long-2400.webp 2400w, assets/projects/nihao-petshop-long.webp 4320w" sizes="(max-width:700px) 100vw, 1000px"':''}
 function workMarkup(i){const p=projects[i];const media=p.image?(p.expandIntro?keylogicMarkup(p):`<img class="detail-long-image" src="${preferredImage(p.image)}" alt="${p.imageAlt}" loading="lazy" decoding="async" fetchpriority="high"${detailImageAttrs(p)}>`):`<div class="detail-placeholder"><span>${pad(i+1)}</span><p>作品即将呈现 / Coming soon</p></div>`;return `<div class="detail-lede"><p>作品展示 / Project showcase</p><div class="detail-facts"><span>CATEGORY<br><b>${p.meta}</b></span><span>INDEX<br><b>${pad(i+1)} / ${pad(projects.length)}</b></span></div></div><div class="detail-media">${media}</div>`}
 function aboutMarkup(){return `
