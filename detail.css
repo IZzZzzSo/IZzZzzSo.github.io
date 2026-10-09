@@ -48,12 +48,13 @@
 @media(max-width:700px){#detail .resume-sheet{padding:65px 22px 20px}#detail .resume-opening h3{font-size:34px}#detail .resume-skillset{gap:0 16px}#detail .info-film{margin-inline:22px;aspect-ratio:2}#detail .resume-motion{font-size:60px}#detail .detail-nav{padding-inline:20px}#detail .detail-nav button{font-size:14px}}
 @media(prefers-reduced-motion:reduce){#detail,#detail .resume-motion{animation:none!important}}
 
-/* One KeyLogic source image is shown in two aligned sections, leaving room for live text. */
-#detail .keylogic-intro-clip,#detail .keylogic-rest-clip{position:relative;width:100%;overflow:hidden}
-#detail .keylogic-intro-clip{aspect-ratio:1600/1524}
-#detail .keylogic-intro-clip>.detail-long-image{position:absolute;left:0;top:0}
-#detail .keylogic-rest-clip{aspect-ratio:1600/13894}
-#detail .keylogic-rest-clip>.detail-long-image{position:absolute;left:0;top:0;transform:translateY(-9.88455%)}
+/* Exact crops of the approved long image load as each section nears the viewport. */
+#detail .keylogic-intro-clip,#detail .keylogic-rest-clip{width:100%;overflow:hidden}
+#detail .keylogic-segment{display:block;width:100%;line-height:0}
+#detail .keylogic-segment>.detail-long-image{display:block;width:100%;height:auto}
+body.shared-entry #works{transition:none}
+body.shared-entry #works.is-open .works-inner{animation:none;opacity:1}
+body.shared-entry .intro-screen{display:none}
 #detail .keylogic-expand{padding:0 4% 38px 55%;background:#fff}
 #detail .keylogic-expand-button{border:0;border-radius:999px;background:#111;color:#fff;padding:13px 20px;cursor:pointer;font:15px/1.2 Arial,SourceHan,sans-serif}
 #detail .keylogic-expand-button:focus-visible{outline:3px solid #1763df;outline-offset:3px}

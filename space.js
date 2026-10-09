@@ -13,6 +13,8 @@ const supportsWebp=(()=>{try{return document.createElement('canvas').toDataURL('
 const preferredImage=path=>supportsWebp?path.replace(/\.(png|jpe?g)$/i,'.webp'):path;
 const scroller=works.querySelector('.works-inner'),panelHead=works.querySelector('.panel-head'),returnControl=works.querySelector('.detail-return');
 let selected=0,orbit=false,panelState='closed',panelTimer=0,backdropIndex=-1,returnFocus=null;
+const sharedKeylogic=new URLSearchParams(location.search).get('project')==='keylogic';
+let sharedBackdropPending=sharedKeylogic;
 const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduced-motion: reduce)'),compactBackdrop=matchMedia('(max-width:700px), (pointer:coarse) and (orientation:portrait)');
 // Only projects with a foldout entry replace the original detail backdrop.
 const foldoutProjects=[
@@ -174,7 +176,9 @@ function closePanel(){
   (returnFocus||$('.view-works')).focus({preventScroll:true});
  });
 }
-function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="detail-long-image" src="${preferredImage(p.image)}?v=20261009-plane" alt="凯洛格案例首图与项目简介" loading="lazy" decoding="async" fetchpriority="high"></div>
+const keylogicSegmentHeights=[1524,2300,2300,2300,2300,2300,2394];
+function keylogicSegment(index){const number=String(index+1).padStart(2,'0'),base=`assets/projects/keylogic-20261010-${number}`,first=index===0;return `<picture class="keylogic-segment"><source srcset="${base}.webp" type="image/webp"><img class="detail-long-image" src="${base}.jpg" width="1600" height="${keylogicSegmentHeights[index]}" alt="${first?'凯洛格案例首图与项目简介':''}" loading="${first?'eager':'lazy'}" decoding="async" fetchpriority="${first?'high':'low'}"></picture>`}
+function keylogicMarkup(p){return `<div class="keylogic-intro-clip">${keylogicSegment(0)}</div>
   <section class="keylogic-expand" aria-label="凯洛格项目介绍"><button class="keylogic-expand-button" type="button" aria-controls="keylogic-description" aria-expanded="false">展开完整内容 ↗</button>
     <div class="keylogic-description" id="keylogic-description" hidden>
       <p>凯洛格成立于 2004 年，专注于咨询培训领域。以战略引领、人才驱动为方向，为企业提供体系咨询、面授培训和数字化学习相结合的人才管理解决方案。</p>
@@ -185,7 +189,7 @@ function keylogicMarkup(p){return `<div class="keylogic-intro-clip"><img class="
       <p>品牌语言延展至报告、数字页面、活动传播与线下物料，让研究洞察和人才发展内容在不同触点都能被清楚识别。</p>
     </div>
   </section>
-  <div class="keylogic-rest-clip"><img class="detail-long-image" src="${preferredImage(p.image)}?v=20261009-plane" alt="凯洛格视觉识别与品牌应用展示长图后续" loading="lazy" decoding="async"></div>`}
+  <div class="keylogic-rest-clip" role="img" aria-label="凯洛格视觉识别与品牌应用展示长图后续">${keylogicSegmentHeights.slice(1).map((_,index)=>keylogicSegment(index+1)).join('')}</div>`}
 function detailImageAttrs(p){return supportsWebp&&p.image.endsWith('nihao-petshop-long.png')?' srcset="assets/projects/nihao-petshop-long-2400.webp 2400w, assets/projects/nihao-petshop-long.webp 4320w" sizes="(max-width:700px) 100vw, 1000px"':''}
 function workMarkup(i){const p=projects[i];const media=p.image?(p.expandIntro?keylogicMarkup(p):`<img class="detail-long-image" src="${preferredImage(p.image)}" alt="${p.imageAlt}" loading="lazy" decoding="async" fetchpriority="high"${detailImageAttrs(p)}>`):`<div class="detail-placeholder"><span>${pad(i+1)}</span><p>作品即将呈现 / Coming soon</p></div>`;return `<div class="detail-lede"><p>作品展示 / Project showcase</p><div class="detail-facts"><span>CATEGORY<br><b>${p.meta}</b></span><span>INDEX<br><b>${pad(i+1)} / ${pad(projects.length)}</b></span></div></div><div class="detail-media">${media}</div>`}
 function aboutMarkup(){return `
@@ -202,7 +206,12 @@ function showDetail(i){
  if(i<0||i>=projects.length||!['index','detail'].includes(panelState))return;
  selected=i;const p=projects[i];setNumber(i);
  if(foldoutProjects[i]){
-  showBackdrop(i,false);renderFoldout(i);backdrop.classList.toggle('is-detail',!compactBackdrop.matches);
+  showBackdrop(i,false);
+  if(sharedBackdropPending&&i===0){
+   sharedBackdropPending=false;
+   setTimeout(()=>{if(panelState==='detail'&&selected===0)renderFoldout(0)},1600);
+  }else renderFoldout(i);
+  backdrop.classList.toggle('is-detail',!compactBackdrop.matches);
  }else hideBackdrop(); // Unapproved projects keep the original plain background.
  detail.classList.toggle('is-info',p.type==='about');
  $('#detail-title').textContent=p.type==='about'?'My Info.':p.title;$('#detail-meta').textContent=p.meta;
@@ -274,3 +283,9 @@ function flushStroke(){frame=0;if(!pending)return;const {p,r}=pending,a=last||p;
 function resetMask(){if(frame)cancelAnimationFrame(frame);frame=0;pending=null;uncovered=false;last=null;hint.classList.remove('used');hint.hidden=false;paintMask(true)}
 function erase(e){const blocked=panelState!=='closed'||!!e.target.closest('header,footer,button');cursor.classList.toggle('active',!blocked&&e.pointerType!=='touch');cursor.style.left=`${e.clientX}px`;cursor.style.top=`${e.clientY}px`;if(uncovered||blocked){if(pending)flushStroke();last=null;return}const rect=home.getBoundingClientRect(),p={x:e.clientX-rect.left,y:e.clientY-rect.top},r=Math.max(55,Math.min(110,w*.092));pending={p,r};if(!frame)frame=requestAnimationFrame(flushStroke)}
 home.addEventListener('pointermove',erase);home.addEventListener('pointerdown',erase);['pointerleave','pointerup','pointercancel'].forEach(t=>home.addEventListener(t,()=>{if(pending)flushStroke();last=null;if(t!=='pointerup')cursor.classList.remove('active')}));hint.querySelector('button').addEventListener('click',()=>{uncovered=true;if(frame)cancelAnimationFrame(frame);frame=0;pending=null;ctx.clearRect(0,0,w,h);hint.hidden=true});new ResizeObserver(()=>paintMask()).observe(home);resetMask();
+if(sharedKeylogic){
+ document.body.classList.add('shared-entry');
+ measureOrigin();works.hidden=false;works.classList.add('is-open');
+ document.body.classList.add('panel-open');$('#home').inert=true;
+ panelState='index';scroller.inert=false;showDetail(0);
+}
