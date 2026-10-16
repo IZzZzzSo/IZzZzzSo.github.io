@@ -14,9 +14,8 @@ const preferredImage=path=>supportsWebp?path.replace(/\.(png|jpe?g)$/i,'.webp'):
 const scroller=works.querySelector('.works-inner'),panelHead=works.querySelector('.panel-head'),returnControl=works.querySelector('.detail-return');
 let selected=0,orbit=false,panelState='closed',panelTimer=0,backdropIndex=-1,returnFocus=null;
 const pageParams=new URLSearchParams(location.search);
-const segmentedPreview=pageParams.get('preview')==='segments';
-const previewProjectIndex={keylogic:0,octopus:1,croco:2};
-const sharedProject=segmentedPreview?(previewProjectIndex[pageParams.get('project')]??0):(pageParams.get('project')==='keylogic'?0:null);
+const previewProjectIndex={keylogic:0,octopus:1,croco:2,nihao:3,weilan:4,workshop:5,twelve:6};
+const sharedProject=previewProjectIndex[pageParams.get('project')]??null;
 let sharedBackdropPending=sharedProject===0;
 const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduced-motion: reduce)'),compactBackdrop=matchMedia('(max-width:700px), (pointer:coarse) and (orientation:portrait)');
 // Only projects with a foldout entry replace the original detail backdrop.
@@ -48,7 +47,7 @@ function foldoutTrack(project,placement,secondary=false){
  for(let index=0;index<8;index++){
   const number=pad(index+1),card=document.createElement('section'),art=document.createElement('img'),caption=document.createElement('div');
   card.className='foldout-card';art.className='foldout-art';art.alt='';art.loading='eager';art.decoding='async';art.fetchPriority='low';
-  const assetKey=segmentedPreview&&project.key==='03-croco'?'03-croco-preview':project.key;
+  const assetKey=project.key==='03-croco'?'03-croco-preview':project.key;
   art.src=preferredImage(project.portrait||`assets/foldouts/${assetKey}/${secondary?'secondary-':project.prefix||''}${number}.${secondary?'jpg':project.extension||'jpg'}`);
   caption.className='foldout-caption';
   const label=document.createElement('span'),title=document.createElement('span');
@@ -185,11 +184,15 @@ function keylogicSegment(index){const number=String(index+1).padStart(2,'0'),bas
 const previewSegments=[
  {name:'keylogic',width:1600,cuts:[0,1524,3380,5570,7420,9620,11375,13150,15418]},
  {name:'octopus',width:1600,cuts:[0,967,2070,2955,4040,5266]},
- {name:'croco',width:2000,cuts:[0,2700,5450,7196,9647,12130,14963]}
+ {name:'croco',width:2000,cuts:[0,2700,5450,7196,9647,12130,14963]},
+ {name:'nihao',width:2400,cuts:[0,900,1800,2710,3590,4450,5370,6280,7170]},
+ {name:'weilan',width:1600,cuts:[0,1020,1580,2160,2890,3460,3960,4884]},
+ {name:'workshop',width:793,cuts:[0,515,815,1340,1750,1983]},
+ {name:'twelve',width:755,cuts:[0,565,955,2140,2395,2800]}
 ];
 function previewSegment(projectIndex,segmentIndex){const spec=previewSegments[projectIndex],number=pad(segmentIndex+1),first=segmentIndex===0;return `<img class="detail-long-image" src="assets/projects/${spec.name}-preview-${number}.webp" width="${spec.width}" height="${spec.cuts[segmentIndex+1]-spec.cuts[segmentIndex]}" alt="${first?projects[projectIndex].imageAlt:''}" loading="${first?'eager':'lazy'}" decoding="async" fetchpriority="${first?'high':'low'}">`}
 function previewSegmentMarkup(projectIndex){return `<div class="detail-image-segments" role="img" aria-label="${projects[projectIndex].imageAlt}">${previewSegments[projectIndex].cuts.slice(1).map((_,index)=>previewSegment(projectIndex,index)).join('')}</div>`}
-function keylogicMarkup(p){const first=segmentedPreview?previewSegment(0,0):keylogicSegment(0),rest=segmentedPreview?previewSegments[0].cuts.slice(2).map((_,index)=>previewSegment(0,index+1)).join(''):keylogicSegmentHeights.slice(1).map((_,index)=>keylogicSegment(index+1)).join('');return `<div class="keylogic-intro-clip">${first}</div>
+function keylogicMarkup(p){const first=previewSegment(0,0),rest=previewSegments[0].cuts.slice(2).map((_,index)=>previewSegment(0,index+1)).join('');return `<div class="keylogic-intro-clip">${first}</div>
   <section class="keylogic-expand" aria-label="凯洛格项目介绍"><button class="keylogic-expand-button" type="button" aria-controls="keylogic-description" aria-expanded="false">展开完整内容 ↗</button>
     <div class="keylogic-description" id="keylogic-description" hidden>
       <p>凯洛格成立于 2004 年，专注于咨询培训领域。以战略引领、人才驱动为方向，为企业提供体系咨询、面授培训和数字化学习相结合的人才管理解决方案。</p>
@@ -202,7 +205,7 @@ function keylogicMarkup(p){const first=segmentedPreview?previewSegment(0,0):keyl
   </section>
   <div class="keylogic-rest-clip" role="img" aria-label="凯洛格视觉识别与品牌应用展示长图后续">${rest}</div>`}
 function detailImageAttrs(p){return supportsWebp&&p.image.endsWith('nihao-petshop-long.png')?' srcset="assets/projects/nihao-petshop-long-2400.webp 2400w, assets/projects/nihao-petshop-long.webp 4320w" sizes="(max-width:700px) 100vw, 1000px"':''}
-function workMarkup(i){const p=projects[i];const media=p.image?(p.expandIntro?keylogicMarkup(p):segmentedPreview&&i<3?previewSegmentMarkup(i):`<img class="detail-long-image" src="${preferredImage(p.image)}" alt="${p.imageAlt}" loading="lazy" decoding="async" fetchpriority="high"${detailImageAttrs(p)}>`):`<div class="detail-placeholder"><span>${pad(i+1)}</span><p>作品即将呈现 / Coming soon</p></div>`;return `<div class="detail-lede"><p>作品展示 / Project showcase</p><div class="detail-facts"><span>CATEGORY<br><b>${p.meta}</b></span><span>INDEX<br><b>${pad(i+1)} / ${pad(projects.length)}</b></span></div></div><div class="detail-media">${media}</div>`}
+function workMarkup(i){const p=projects[i];const media=p.image?(p.expandIntro?keylogicMarkup(p):previewSegments[i]?previewSegmentMarkup(i):`<img class="detail-long-image" src="${preferredImage(p.image)}" alt="${p.imageAlt}" loading="lazy" decoding="async" fetchpriority="high"${detailImageAttrs(p)}>`):`<div class="detail-placeholder"><span>${pad(i+1)}</span><p>作品即将呈现 / Coming soon</p></div>`;return `<div class="detail-lede"><p>作品展示 / Project showcase</p><div class="detail-facts"><span>CATEGORY<br><b>${p.meta}</b></span><span>INDEX<br><b>${pad(i+1)} / ${pad(projects.length)}</b></span></div></div><div class="detail-media">${media}</div>`}
 function aboutMarkup(){return `
   <div class="resume-sheet">
     <div class="resume-opening"><p>GRAPHIC DESIGNER & CREATIVE PRACTITIONER</p><h3>LI YUSHU <span>李钰姝</span></h3></div>
