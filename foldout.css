@@ -16,6 +16,7 @@
 .foldout-art{display:block;width:var(--foldout-art-size);height:var(--foldout-art-size);object-fit:cover;filter:saturate(.8)}
 .foldout-track.is-rear .foldout-art{filter:saturate(.56)}
 .foldout-track[data-project="03-croco"] .foldout-art{filter:saturate(.6)}
+.foldout-track[data-project="06-bookday"] .foldout-art{filter:saturate(.7) brightness(1.02)}
 .foldout-track[data-project="06-workshop"] .foldout-art{transform:scale(.85);transform-origin:center;filter:grayscale(1)}
 .foldout-track[data-project="04-nihao"] .foldout-art{background:#dce6f8}
 .foldout-portrait-frame{width:var(--foldout-art-size);height:var(--foldout-art-size);overflow:hidden;background:#eee}

@@ -4,7 +4,7 @@ const projects=[
  {title:'CROCO',meta:'Character / IP Design',type:'design',image:'assets/projects/croco-long.jpg',imageAlt:'CROCO IP 项目完整作品介绍长图'},
  {title:'NIHAO · PETSHIOP',meta:'Branding / IP Design',type:'design',image:'assets/projects/nihao-petshop-long.png',imageAlt:'NIHAO PETSHOP 品牌与 IP 设计完整作品介绍长图'},
  {title:'蔚蓝',meta:'Branding / Design',type:'design',image:'assets/projects/weilan-long.jpg',imageAlt:'蔚蓝海洋生态保护主题桌游完整作品介绍长图'},
- {title:'2026世界读书日活动',meta:'Event Visual / Design',type:'design',image:'assets/projects/bookday-preview-01.webp',imageAlt:'2026世界读书日活动视觉与周边设计完整作品介绍长图'},
+ {title:'2026世界读书日活动',meta:'Event Visual / Design',type:'design',image:'assets/projects/bookday-hq-01.webp',imageAlt:'2026世界读书日活动视觉与周边设计完整作品介绍长图'},
  {title:'AI实战工作坊活动',meta:'Event Visual / Design',type:'design',image:'assets/projects/workshop-long.png',imageAlt:'AI实战工作坊项目完整作品介绍长图'},
  {title:'2026开年十二讲系列活动',meta:'Media Design',type:'ai',image:'assets/projects/twelve-talks-long.png',imageAlt:'2026开年十二讲系列活动完整作品介绍长图'},
  {title:'关于我',meta:'designer',type:'about'}
@@ -26,7 +26,7 @@ const foldoutProjects=[
  {key:'03-croco',caption:'CROCO / IP DESIGN',angle:'74deg',left:'51%',top:'49%'},
  {key:'04-nihao',caption:'NIHAO / IP DESIGN',angle:'68deg',left:'48%',top:'52%',extension:'png'},
  {key:'05-weilan',caption:'WEILAN / OCEAN CARDS',angle:'-80deg',left:'50%',top:'35%',secondary:{angle:'71deg',left:'52%',top:'67%'}},
- null, // Book Day has no approved foldout yet.
+ {key:'06-bookday',caption:'WORLD BOOK DAY / EVENT VISUAL',angle:'-69deg',left:'49%',top:'53%'},
  {key:'06-workshop',caption:'AI WORKSHOP / EVENT VISUAL',angle:'82deg',left:'50%',top:'50%'},
  null, // Keep the original backdrop for the twelve-talks project.
  {key:'08-about',caption:'LI YUSHU / MY INFO',angle:'74deg',left:'47%',top:'78%',portrait:'assets/foldouts/08-about/portrait.png'}
@@ -189,11 +189,11 @@ const previewSegments=[
  {name:'croco',width:2000,cuts:[0,2700,5450,7196,9647,12130,14963]},
  {name:'nihao',width:2400,cuts:[0,900,1800,2710,3590,4450,5370,6280,7170]},
  {name:'weilan',width:1600,cuts:[0,1020,1580,2160,2890,3460,3960,4884]},
- {name:'bookday',width:2400,cuts:[0,1200,2064,2928,3824,4664,5532]},
+ {name:'bookday',assetPrefix:'bookday-hq',width:3000,cuts:[0,1500,2580,3660,4780,5830,6913]},
  {name:'workshop',width:793,cuts:[0,515,815,1340,1750,1983]},
  {name:'twelve',width:755,cuts:[0,565,955,2140,2395,2800]}
 ];
-function previewSegment(projectIndex,segmentIndex){const spec=previewSegments[projectIndex],number=pad(segmentIndex+1),first=segmentIndex===0;return `<img class="detail-long-image" src="assets/projects/${spec.name}-preview-${number}.webp" width="${spec.width}" height="${spec.cuts[segmentIndex+1]-spec.cuts[segmentIndex]}" alt="${first?projects[projectIndex].imageAlt:''}" loading="${first?'eager':'lazy'}" decoding="async" fetchpriority="${first?'high':'low'}">`}
+function previewSegment(projectIndex,segmentIndex){const spec=previewSegments[projectIndex],number=pad(segmentIndex+1),first=segmentIndex===0,prefix=spec.assetPrefix||`${spec.name}-preview`;return `<img class="detail-long-image" src="assets/projects/${prefix}-${number}.webp" width="${spec.width}" height="${spec.cuts[segmentIndex+1]-spec.cuts[segmentIndex]}" alt="${first?projects[projectIndex].imageAlt:''}" loading="${first?'eager':'lazy'}" decoding="async" fetchpriority="${first?'high':'low'}">`}
 function previewSegmentMarkup(projectIndex){return `<div class="detail-image-segments" role="img" aria-label="${projects[projectIndex].imageAlt}">${previewSegments[projectIndex].cuts.slice(1).map((_,index)=>previewSegment(projectIndex,index)).join('')}</div>`}
 function keylogicMarkup(p){const first=previewSegment(0,0),rest=previewSegments[0].cuts.slice(2).map((_,index)=>previewSegment(0,index+1)).join('');return `<div class="keylogic-intro-clip">${first}</div>
   <section class="keylogic-expand" aria-label="凯洛格项目介绍"><button class="keylogic-expand-button" type="button" aria-controls="keylogic-description" aria-expanded="false">展开完整内容 ↗</button>
