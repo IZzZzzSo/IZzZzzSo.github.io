@@ -21,7 +21,7 @@
 #works #total-number{flex:0 0 1.22em;min-width:0;height:1em;line-height:1;text-align:right;padding-right:.02em;color:#cbcbcb}
 #works .number-display i{flex:1;min-width:20px;height:clamp(7px,1vw,12px);background:#cbcbcb}
 #project-list{position:relative;z-index:2;flex:0 1 auto;min-height:0;max-height:1000px;background:#000;overflow-y:auto;overflow-x:hidden;border-inline:1px solid #000;box-shadow:0 0 50px 30px #000;transition:max-height 1s var(--panel-ease);scrollbar-width:none}
-#works .project-row{position:relative;isolation:isolate;display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:54px;padding:15px 20px;text-align:left;background:#cbcbcb;color:#111;border:1px solid #000;overflow:hidden;transition:none}
+#works .project-row{position:relative;isolation:isolate;display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:48px;padding:12px 20px;text-align:left;background:#cbcbcb;color:#111;border:1px solid #000;overflow:hidden;transition:none}
 #works .project-row strong{font-size:16px;line-height:1.4;letter-spacing:-.025em;font-weight:500}
 #works .project-row small{font-size:10px;line-height:1.5;letter-spacing:.04em;color:#555;text-align:right}
 #works .row-number{font:11px/1 monospace;color:#666}
@@ -51,7 +51,7 @@ body.panel-open #home{background:#cbcbcb;cursor:auto;isolation:auto}
 body.panel-open #home .scene,body.panel-open .reveal-mask,body.panel-open .reveal-hint,body.panel-open .paint-cursor{opacity:0;visibility:hidden;pointer-events:none}
 body.panel-open #home header h1,body.panel-open #home .tools,body.panel-open #home .discipline{opacity:0}
 body.panel-open .view-works:before,body.panel-open .view-works span{opacity:0}
-@media(max-width:700px){:root{--panel-width:calc(100vw - 32px);--index-size:clamp(90px,22vw,150px)}#works .panel-head{padding:18px}#works .panel-head h2{font-size:26px}#works .number-cage{top:-18px}#works .number-display{padding-inline:18px;gap:16px}#works .project-row{padding:12px 16px;grid-template-columns:24px minmax(0,1fr);gap:2px 8px;min-height:62px}#works .project-row small{grid-column:2;text-align:left;font-size:10px}#works .project-row strong{font-size:15px}#back{width:80%}.view-works span{transform:rotateX(0deg);font-size:14px}}
+@media(max-width:700px){:root{--panel-width:calc(100vw - 32px);--index-size:clamp(90px,22vw,150px)}#works .panel-head{padding:18px}#works .panel-head h2{font-size:26px}#works .number-cage{top:-18px}#works .number-display{padding-inline:18px;gap:16px}#works .project-row{padding:8px 16px;grid-template-columns:24px minmax(0,1fr);gap:2px 8px;min-height:56px}#works .project-row small{grid-column:2;text-align:left;font-size:10px}#works .project-row strong{font-size:15px}#back{width:80%}.view-works span{transform:rotateX(0deg);font-size:14px}}
 @media(prefers-reduced-motion:reduce){#works,#works .panel-head,#works .number-display,#works #number-reel span,#project-list,#works .row-cover,#works .project-row::before,#back,.view-works span{transition:none!important}#works.is-open .works-inner{animation:none;opacity:1}}
 
 /* A brief monochrome TV-static break when returning to the works index. */

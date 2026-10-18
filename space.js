@@ -4,7 +4,8 @@ const projects=[
  {title:'CROCO',meta:'Character / IP Design',type:'design',image:'assets/projects/croco-long.jpg',imageAlt:'CROCO IP 项目完整作品介绍长图'},
  {title:'NIHAO · PETSHIOP',meta:'Branding / IP Design',type:'design',image:'assets/projects/nihao-petshop-long.png',imageAlt:'NIHAO PETSHOP 品牌与 IP 设计完整作品介绍长图'},
  {title:'蔚蓝',meta:'Branding / Design',type:'design',image:'assets/projects/weilan-long.jpg',imageAlt:'蔚蓝海洋生态保护主题桌游完整作品介绍长图'},
- {title:'AI实战工作坊',meta:'Event Visual / Design',type:'design',image:'assets/projects/workshop-long.png',imageAlt:'AI实战工作坊项目完整作品介绍长图'},
+ {title:'2026世界读书日活动',meta:'Event Visual / Design',type:'design',image:'assets/projects/bookday-preview-01.webp',imageAlt:'2026世界读书日活动视觉与周边设计完整作品介绍长图'},
+ {title:'AI实战工作坊活动',meta:'Event Visual / Design',type:'design',image:'assets/projects/workshop-long.png',imageAlt:'AI实战工作坊项目完整作品介绍长图'},
  {title:'2026开年十二讲系列活动',meta:'Media Design',type:'ai',image:'assets/projects/twelve-talks-long.png',imageAlt:'2026开年十二讲系列活动完整作品介绍长图'},
  {title:'关于我',meta:'designer',type:'about'}
 ];
@@ -14,7 +15,7 @@ const preferredImage=path=>supportsWebp?path.replace(/\.(png|jpe?g)$/i,'.webp'):
 const scroller=works.querySelector('.works-inner'),panelHead=works.querySelector('.panel-head'),returnControl=works.querySelector('.detail-return');
 let selected=0,orbit=false,panelState='closed',panelTimer=0,backdropIndex=-1,returnFocus=null;
 const pageParams=new URLSearchParams(location.search);
-const previewProjectIndex={keylogic:0,octopus:1,croco:2,nihao:3,weilan:4,workshop:5,twelve:6};
+const previewProjectIndex={keylogic:0,octopus:1,croco:2,nihao:3,weilan:4,bookday:5,workshop:6,twelve:7};
 const sharedProject=previewProjectIndex[pageParams.get('project')]??null;
 let sharedBackdropPending=sharedProject===0;
 const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduced-motion: reduce)'),compactBackdrop=matchMedia('(max-width:700px), (pointer:coarse) and (orientation:portrait)');
@@ -25,6 +26,7 @@ const foldoutProjects=[
  {key:'03-croco',caption:'CROCO / IP DESIGN',angle:'74deg',left:'51%',top:'49%'},
  {key:'04-nihao',caption:'NIHAO / IP DESIGN',angle:'68deg',left:'48%',top:'52%',extension:'png'},
  {key:'05-weilan',caption:'WEILAN / OCEAN CARDS',angle:'-80deg',left:'50%',top:'35%',secondary:{angle:'71deg',left:'52%',top:'67%'}},
+ null, // Book Day has no approved foldout yet.
  {key:'06-workshop',caption:'AI WORKSHOP / EVENT VISUAL',angle:'82deg',left:'50%',top:'50%'},
  null, // Keep the original backdrop for the twelve-talks project.
  {key:'08-about',caption:'LI YUSHU / MY INFO',angle:'74deg',left:'47%',top:'78%',portrait:'assets/foldouts/08-about/portrait.png'}
@@ -187,6 +189,7 @@ const previewSegments=[
  {name:'croco',width:2000,cuts:[0,2700,5450,7196,9647,12130,14963]},
  {name:'nihao',width:2400,cuts:[0,900,1800,2710,3590,4450,5370,6280,7170]},
  {name:'weilan',width:1600,cuts:[0,1020,1580,2160,2890,3460,3960,4884]},
+ {name:'bookday',width:2400,cuts:[0,1200,2064,2928,3824,4664,5532]},
  {name:'workshop',width:793,cuts:[0,515,815,1340,1750,1983]},
  {name:'twelve',width:755,cuts:[0,565,955,2140,2395,2800]}
 ];
