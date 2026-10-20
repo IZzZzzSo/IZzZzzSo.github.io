@@ -1,6 +1,7 @@
 const projects=[
  {title:'凯洛格 · 企业传播视觉系统',meta:'Branding / Graphic Design',type:'design',image:'assets/projects/keylogic-long.jpg',imageAlt:'凯洛格品牌策略、视觉识别与应用案例完整长图',expandIntro:true},
  {title:'孤独的章鱼',meta:'Picture Book / Illustration',type:'design',image:'assets/projects/lonely-octopus-long.jpg',imageAlt:'孤独的章鱼绘本项目完整作品介绍长图'},
+ {title:'香气漫游-城市香氛插画',meta:'Illustration / Visual Storytelling',type:'design',image:'assets/projects/scent-voyage-01.webp',imageAlt:'香气漫游 Diptyque 城市香氛插画作品集完整长页'},
  {title:'CROCO',meta:'Character / IP Design',type:'design',image:'assets/projects/croco-long.jpg',imageAlt:'CROCO IP 项目完整作品介绍长图'},
  {title:'NIHAO · PETSHIOP',meta:'Branding / IP Design',type:'design',image:'assets/projects/nihao-petshop-long.png',imageAlt:'NIHAO PETSHOP 品牌与 IP 设计完整作品介绍长图'},
  {title:'蔚蓝',meta:'Branding / Design',type:'design',image:'assets/projects/weilan-long.jpg',imageAlt:'蔚蓝海洋生态保护主题桌游完整作品介绍长图'},
@@ -15,7 +16,7 @@ const preferredImage=path=>supportsWebp?path.replace(/\.(png|jpe?g)$/i,'.webp'):
 const scroller=works.querySelector('.works-inner'),panelHead=works.querySelector('.panel-head'),returnControl=works.querySelector('.detail-return');
 let selected=0,orbit=false,panelState='closed',panelTimer=0,backdropIndex=-1,returnFocus=null;
 const pageParams=new URLSearchParams(location.search);
-const previewProjectIndex={keylogic:0,octopus:1,croco:2,nihao:3,weilan:4,bookday:5,workshop:6,twelve:7};
+const previewProjectIndex={keylogic:0,octopus:1,scent:2,croco:3,nihao:4,weilan:5,bookday:6,workshop:7,twelve:8};
 const sharedProject=previewProjectIndex[pageParams.get('project')]??null;
 let sharedBackdropPending=sharedProject===0;
 const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduced-motion: reduce)'),compactBackdrop=matchMedia('(max-width:700px), (pointer:coarse) and (orientation:portrait)');
@@ -23,6 +24,7 @@ const pad=n=>String(n).padStart(2,'0'),reducedPanels=matchMedia('(prefers-reduce
 const foldoutProjects=[
  {key:'01-keylogic',caption:'KEYLOGIC / BRAND IDENTITY',angle:'-72deg',left:'50%',top:'35%',secondary:{angle:'79deg',left:'49%',top:'69%'}},
  {key:'02-octopus',caption:'THE OCTOPUS WHO LIVES ALONE',angle:'-76deg',left:'50%',top:'50%',prefix:'square-'},
+ {key:'03-scent-voyage',caption:'A VOYAGE IN SCENT / ILLUSTRATION',angle:'63deg',left:'51%',top:'48%'},
  {key:'03-croco',caption:'CROCO / IP DESIGN',angle:'74deg',left:'51%',top:'49%'},
  {key:'04-nihao',caption:'NIHAO / IP DESIGN',angle:'68deg',left:'48%',top:'52%',extension:'png'},
  {key:'05-weilan',caption:'WEILAN / OCEAN CARDS',angle:'-80deg',left:'50%',top:'35%',secondary:{angle:'71deg',left:'52%',top:'67%'}},
@@ -186,6 +188,7 @@ function keylogicSegment(index){const number=String(index+1).padStart(2,'0'),bas
 const previewSegments=[
  {name:'keylogic',width:1600,cuts:[0,1524,3380,5570,7420,9620,11375,13150,15418]},
  {name:'octopus',width:1600,cuts:[0,967,2070,2955,4040,5266]},
+ {name:'scent-voyage',assetPrefix:'scent-voyage',width:1800,cuts:[0,3000,6000,9000,12000,15000,18000,21000,24000]},
  {name:'croco',width:2000,cuts:[0,2700,5450,7196,9647,12130,14963]},
  {name:'nihao',width:2400,cuts:[0,900,1800,2710,3590,4450,5370,6280,7170]},
  {name:'weilan',width:1600,cuts:[0,1020,1580,2160,2890,3460,3960,4884]},
